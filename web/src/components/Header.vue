@@ -1,16 +1,18 @@
 <template>
     <div class="header">
-        <h1 class="icon">
-            <img src="../assets/Rakuten.svg.png" alt="">
-        </h1>
-        <el-menu :default-active="activeIndex"
-                 class="el-menu-demo"
-                 mode="horizontal"
-                 :router="true"
-                 @select="handleSelect">
-            <el-menu-item index="/">Dashboard</el-menu-item>
-            <el-menu-item index="/Jenkins">Jenkins</el-menu-item>
-        </el-menu>
+        <div class="container">
+            <h1 class="icon">
+                <img src="../assets/Rakuten.svg.png" alt="">
+            </h1>
+            <el-menu :default-active="activeIndex"
+                     class="el-menu-demo"
+                     mode="horizontal"
+                     :router="true"
+                     @select="handleSelect">
+                <el-menu-item index="/">Dashboard</el-menu-item>
+                <el-menu-item index="/Jenkins">Jenkins</el-menu-item>
+            </el-menu>
+        </div>
     </div>
 </template>
 
@@ -33,7 +35,13 @@
 <style scoped>
     .header {
         height: 60px;
+    }
+
+    .container{
+        height: 100%;
         border-bottom: 1px solid #dcdfe6;
+        width: 1140px;
+        margin: 0 auto;
     }
 
     .icon {
