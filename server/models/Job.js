@@ -1,10 +1,19 @@
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    name: {
+    jobName: {
         type: String
     },
     jobType: {
+        type: String
+    },
+    lastSuccessfulBuild: {
+        type: String
+    },
+    lastBuild: {
+        type: String
+    },
+    lastCompletedBuild: {
         type: String
     }
 });

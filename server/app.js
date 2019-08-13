@@ -8,6 +8,7 @@ const cors = require('cors');
 const app = express();
 
 const jobRouter = require('./routes/job');
+const jobTypeRouter = require('./routes/jobType');
 
 //mongodb
 const mongoose = require("mongoose");
@@ -22,6 +23,7 @@ const corsOptions = {
 };
 
 app.use('/jobs', cors(corsOptions), jobRouter);
+app.use('/jobTypes', cors(corsOptions), jobTypeRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
