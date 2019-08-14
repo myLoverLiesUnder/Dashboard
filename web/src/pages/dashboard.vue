@@ -62,7 +62,11 @@
             </el-table-column>
             <el-table-column
                     label="Status"
-                    prop="">
+                    prop="status">
+                <template slot-scope="scope">
+                    <i :class="scope.row.status === 'SUCCESS' ? 'el-icon-success' : 'el-icon-error'"
+                       :style="scope.row.status === 'SUCCESS' ? 'color: green' : 'color: red'"></i>
+                </template>
             </el-table-column>
         </el-table>
     </div>
