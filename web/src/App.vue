@@ -23,7 +23,7 @@
 <style>
     .page-container{
         height: 100%;
-        width: 1140px;
+        width: 1155px;
         margin: 0 auto;
         padding-top: 30px;
     }

@@ -7,13 +7,28 @@ const schema = new mongoose.Schema({
     jobType: {
         type: String
     },
-    lastSuccessfulBuild: {
-        type: String
-    },
     lastBuild: {
+        type: Number
+    },
+    totalCount: {
+        type: Number
+    },
+    failCount: {
+        type: Number
+    },
+    successCount: {
+        type: Number
+    },
+    skipCount: {
+        type: Number
+    },
+    timestamp: {
+        type: Number
+    },
+    result: {
         type: String
     },
-    lastCompletedBuild: {
+    successRatio:{
         type: String
     }
 });

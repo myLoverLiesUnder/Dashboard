@@ -6,3 +6,11 @@ export function getJobs() {
         method: 'get'
     })
 }
+
+export function getJobTypes() {
+    return fetch({
+        url: '/jobTypes',
+        method: 'get'
+    })
+}
+

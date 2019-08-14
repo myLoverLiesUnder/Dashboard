@@ -40,7 +40,7 @@
     .container{
         height: 100%;
         border-bottom: 1px solid #dcdfe6;
-        width: 1140px;
+        width: 1150px;
         margin: 0 auto;
     }
 

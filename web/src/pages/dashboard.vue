@@ -8,25 +8,50 @@
                 <template slot-scope="props">
                     <el-table :data="props.row.jobList" label-position="left" inline>
                         <el-table-column
-                                type="index"
-                                width="50">
+                                type="index">
                         </el-table-column>
                         <el-table-column
                                 label="JobName"
                                 prop="jobName"
-                                width="400px">
+                                width="300px">
                         </el-table-column>
                         <el-table-column
-                                label="LastBuild"
-                                prop="lastBuild">
+                                label="Total testcase"
+                                prop="totalCount"
+                                width="110px">
                         </el-table-column>
                         <el-table-column
-                                label="LastCompletedBuild"
-                                prop="lastCompletedBuild">
+                                label="Success testcase"
+                                prop="successCount"
+                                width="120px">
                         </el-table-column>
                         <el-table-column
-                                label="LastSuccessfulBuild"
-                                prop="lastSuccessfulBuild">
+                                label="Fail testcase"
+                                prop="failCount"
+                                width="100px">
+                        </el-table-column>
+                        <el-table-column
+                                label="Skip testcase"
+                                prop="skipCount"
+                                width="100px">
+                        </el-table-column>
+                        <el-table-column
+                                label="Success ratio"
+                                prop="successRatio"
+                                width="100px">
+                        </el-table-column>
+                        <el-table-column
+                                label="Status"
+                                prop="result">
+                            <template slot-scope="scope">
+                                <i :class="scope.row.result === 'SUCCESS' ? 'el-icon-success' : 'el-icon-error'"
+                                   :style="scope.row.result === 'SUCCESS' ? 'color: green' : 'color: red'"></i>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="Time"
+                                prop="timestamp"
+                                :formatter="dateFormat">
                         </el-table-column>
                     </el-table>
                 </template>
@@ -35,6 +60,10 @@
                     label="JobType"
                     prop="jobType">
             </el-table-column>
+            <el-table-column
+                    label="Status"
+                    prop="">
+            </el-table-column>
         </el-table>
     </div>
 </template>
@@ -42,6 +71,8 @@
 <script>
     import { getJobs } from "../axios/api";
     import echarts from '@/lib/echarts'
+    import moment from 'moment'
+
     export default {
         name: "dashboard",
         data() {
@@ -50,69 +81,79 @@
             }
         },
         methods: {
-            getJobData() {
+            dateFormat: function (row, column) {
+                let date = row[column.property];
+                if (date === undefined) {
+                    return "";
+                }
+                return moment(date).format("YYYY-MM-DD HH:mm:ss");
+            },
+            drawChart() {
+                let jobTypesList = [];
+                let jobsData = [];
                 getJobs().then((res) => {
                     if (res.status === 200) {
                         this.tableData = res.data;
-                    }
-                })
-            },
-            drawChart() {
-                let myChart = echarts.init(document.getElementById("pie"));
-                let option = {
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: "{a} <br/>{b}: {c} ({d}%)"
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        x: 'left',
-                        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
-                    },
-                    series: [
-                        {
-                            name:'访问来源',
-                            type:'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: {
-                                normal: {
-                                    show: false,
-                                    position: 'center'
-                                },
-                                emphasis: {
-                                    show: true,
-                                    textStyle: {
-                                        fontSize: '30',
-                                        fontWeight: 'bold'
-                                    }
-                                }
-                            },
-                            labelLine: {
-                                normal: {
-                                    show: false
-                                }
-                            },
-                            data:[
-                                {value:335, name:'直接访问'},
-                                {value:310, name:'邮件营销'},
-                                {value:234, name:'联盟广告'},
-                                {value:135, name:'视频广告'},
-                                {value:1548, name:'搜索引擎'}
-                            ]
+                        for (let item of this.tableData) {
+                            jobTypesList.push(item.jobType);
+                            let temp = {
+                                value: item.jobList.length,
+                                name: item.jobType
+                            };
+                            jobsData.push(temp)
                         }
-                    ]
-                };
-                myChart.setOption(option);
+                        let myChart = echarts.init(document.getElementById("pie"));
+                        let option = {
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                data: jobTypesList
+                            },
+                            series: [
+                                {
+                                    name: 'job amount',
+                                    type: 'pie',
+                                    radius: ['50%', '70%'],
+                                    avoidLabelOverlap: false,
+                                    label: {
+                                        normal: {
+                                            show: false,
+                                            position: 'center'
+                                        },
+                                        emphasis: {
+                                            show: true,
+                                            textStyle: {
+                                                fontSize: '20',
+                                                fontWeight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    labelLine: {
+                                        normal: {
+                                            show: false
+                                        }
+                                    },
+                                    data: jobsData
+                                }
+                            ]
+                        };
+                        myChart.setOption(option);
+                    }
+                });
             }
         },
         mounted() {
-            this.getJobData();
             this.drawChart();
         }
     }
 </script>
 
 <style scoped>
-
+    i {
+        font-size: 15px
+    }
 </style>

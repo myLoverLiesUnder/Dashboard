@@ -3,6 +3,9 @@ const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
     typeName: {
         type: String
+    },
+    status: {
+        type: String
     }
 });
 
