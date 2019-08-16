@@ -14,3 +14,10 @@ export function getJobTypes() {
     })
 }
 
+export function getHistory() {
+    return fetch({
+        url: '/history',
+        method: 'get'
+    })
+}
+

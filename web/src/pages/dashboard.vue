@@ -1,79 +1,116 @@
 <template>
     <div>
-        <div id="pie" style="width: 600px;height:400px;"></div>
-        <el-table
-                :data="tableData"
-                style="width: 100%">
-            <el-table-column type="expand">
-                <template slot-scope="props">
-                    <el-table :data="props.row.jobList" label-position="left" inline>
-                        <el-table-column
-                                type="index">
-                        </el-table-column>
-                        <el-table-column
-                                label="JobName"
-                                prop="jobName"
-                                width="300px">
-                        </el-table-column>
-                        <el-table-column
-                                label="Total testcase"
-                                prop="totalCount"
-                                width="110px">
-                        </el-table-column>
-                        <el-table-column
-                                label="Success testcase"
-                                prop="successCount"
-                                width="120px">
-                        </el-table-column>
-                        <el-table-column
-                                label="Fail testcase"
-                                prop="failCount"
-                                width="100px">
-                        </el-table-column>
-                        <el-table-column
-                                label="Skip testcase"
-                                prop="skipCount"
-                                width="100px">
-                        </el-table-column>
-                        <el-table-column
-                                label="Success ratio"
-                                prop="successRatio"
-                                width="100px">
-                        </el-table-column>
-                        <el-table-column
-                                label="Status"
-                                prop="result">
-                            <template slot-scope="scope">
-                                <i :class="scope.row.result === 'SUCCESS' ? 'el-icon-success' : 'el-icon-error'"
-                                   :style="scope.row.result === 'SUCCESS' ? 'color: green' : 'color: red'"></i>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="Time"
-                                prop="timestamp"
-                                :formatter="dateFormat">
-                        </el-table-column>
-                    </el-table>
-                </template>
-            </el-table-column>
-            <el-table-column
-                    label="JobType"
-                    prop="jobType">
-            </el-table-column>
-            <el-table-column
-                    label="Status"
-                    prop="status">
-                <template slot-scope="scope">
-                    <i :class="scope.row.status === 'SUCCESS' ? 'el-icon-success' : 'el-icon-error'"
-                       :style="scope.row.status === 'SUCCESS' ? 'color: green' : 'color: red'"></i>
-                </template>
-            </el-table-column>
-        </el-table>
+        <div class="block">
+            <div class="title">
+                <el-divider content-position="left">Api Status</el-divider>
+            </div>
+            <div class="source">
+                <div id="pie" style="width: 600px;height:400px;"></div>
+                <el-table
+                        :data="tableData"
+                        style="width: 100%">
+                    <el-table-column type="expand">
+                        <template slot-scope="props">
+                            <el-table :data="props.row.jobList" label-position="left" inline>
+                                <el-table-column
+                                        type="index">
+                                </el-table-column>
+                                <el-table-column
+                                        label="JobName"
+                                        prop="jobName"
+                                        width="300px">
+                                </el-table-column>
+                                <el-table-column
+                                        label="Total testcase"
+                                        prop="totalCount"
+                                        width="110px">
+                                </el-table-column>
+                                <el-table-column
+                                        label="Success testcase"
+                                        prop="successCount"
+                                        width="120px">
+                                </el-table-column>
+                                <el-table-column
+                                        label="Fail testcase"
+                                        prop="failCount"
+                                        width="100px">
+                                </el-table-column>
+                                <el-table-column
+                                        label="Skip testcase"
+                                        prop="skipCount"
+                                        width="100px">
+                                </el-table-column>
+                                <el-table-column
+                                        label="Success ratio"
+                                        prop="successRatio"
+                                        width="100px">
+                                </el-table-column>
+                                <el-table-column
+                                        label="Status"
+                                        prop="result">
+                                    <template slot-scope="scope">
+                                        <i :class="scope.row.result === 'SUCCESS' ? 'el-icon-success' : 'el-icon-error'"
+                                           :style="scope.row.result === 'SUCCESS' ? 'color: green' : 'color: red'"></i>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="Time"
+                                        prop="timestamp"
+                                        :formatter="dateFormat">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="JobType"
+                            prop="jobType">
+                    </el-table-column>
+                    <el-table-column
+                            label="Status"
+                            prop="status">
+                        <template slot-scope="scope">
+                            <i :class="scope.row.status === 'SUCCESS' ? 'el-icon-success' : 'el-icon-error'"
+                               :style="scope.row.status === 'SUCCESS' ? 'color: green' : 'color: red'"></i>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+        </div>
+        <div class="block">
+            <div class="title">
+                <el-divider content-position="left">Incidents History</el-divider>
+            </div>
+            <div class="source">
+                <el-calendar>
+                    <template v-slot:dateCell="{date, data}">
+                        <el-popover
+                                :ref="data.day"
+                                placement="bottom"
+                                width="400"
+                                trigger="manual">
+                            <el-table :data="errorJobList">
+                                <el-table-column property="url" label="Error job url"></el-table-column>
+                            </el-table>
+                            <el-divider content-position="left">
+                                <div class="comment-header">Comment</div>
+                            </el-divider>
+                            <div class="comment-body">{{comment}}</div>
+                            <div slot="reference"
+                                 :ref="data.day + 'div'"
+                                 @click="clickCalendar(data)"
+                                 style="height: 100%;width: 100%">
+                                {{data.day.split('-').slice(1).join('-') }}
+                            </div>
+                        </el-popover>
+                    </template>
+                </el-calendar>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-    import { getJobs } from "../axios/api";
+    import { getHistory, getJobs } from "../axios/api";
     import echarts from '@/lib/echarts'
     import moment from 'moment'
 
@@ -81,10 +118,49 @@
         name: "dashboard",
         data() {
             return {
-                tableData: []
+                tableData: [],
+                history: [],
+                oldDate: '',
+                visible: false,
+                errorJobList: [],
+                comment: ''
             }
         },
         methods: {
+            clickCalendar: function (data) {
+                if (data.type === "current-month") {
+                    this.errorJobList = [];
+                    this.comment = '';
+                    for (let item of this.history) {
+                        if (data.day === moment(new Date(item.date)).format("YYYY-MM-DD")) {
+                            this.errorJobList = item.errorJobList;
+                            this.comment = item.comment;
+                        }
+                    }
+                    if (!this.oldDate) {
+                        this.$refs[data.day].doShow();
+                        this.visible = true;
+                    } else {
+                        if (this.oldDate !== data.day) {
+                            this.$refs[this.oldDate].doClose();
+                            this.visible = true;
+                            this.$refs[data.day].doShow();
+                        } else {
+                            if (this.visible) {
+                                this.$refs[data.day].doClose();
+                            } else {
+                                this.$refs[data.day].doShow();
+                            }
+                            this.visible = !this.visible;
+                        }
+                    }
+                } else {
+                    if (this.oldDate) {
+                        this.$refs[this.oldDate].doClose();
+                    }
+                }
+                this.oldDate = data.day;
+            },
             dateFormat: function (row, column) {
                 let date = row[column.property];
                 if (date === undefined) {
@@ -92,7 +168,22 @@
                 }
                 return moment(date).format("YYYY-MM-DD HH:mm:ss");
             },
-            drawChart() {
+            getIncidentsHistory() {
+                getHistory().then((res) => {
+                    if (res.status === 200) {
+                        this.history = res.data;
+                        for (let item of this.history) {
+                            let refIndex = moment(new Date(item.date)).format("YYYY-MM-DD") + 'div';
+                            if (item.errorJobList.length === 0) {
+                                this.$refs[refIndex].innerText += ' 😁';
+                            } else {
+                                this.$refs[refIndex].innerText += ' 😫';
+                            }
+                        }
+                    }
+                })
+            },
+            getApiStatusAndDrawChart() {
                 let jobTypesList = [];
                 let jobsData = [];
                 getJobs().then((res) => {
@@ -151,13 +242,41 @@
             }
         },
         mounted() {
-            this.drawChart();
+            this.getApiStatusAndDrawChart();
+            this.getIncidentsHistory();
         }
     }
 </script>
 
 <style scoped>
+    .block {
+        margin-bottom: 24px;
+        border: 1px solid #ebebeb;
+        border-radius: 3px;
+        box-shadow: rgba(0, 0, 0, 0.12) 0 2px 4px, rgba(0, 0, 0, 0.04) 0 0 6px
+    }
+
+    .title {
+        padding: 10px;
+    }
+
+    .source {
+        padding: 24px;
+    }
+
     i {
         font-size: 15px
+    }
+
+    .comment-header {
+        font-weight: bold;
+        font-size: 12px;
+        color: #909399;
+    }
+
+    .comment-body {
+        padding-left: 10px;
+        font-size: 12px;
+        color: #909399;
     }
 </style>

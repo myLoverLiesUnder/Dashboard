@@ -9,6 +9,7 @@ const app = express();
 
 const jobRouter = require('./routes/job');
 const jobTypeRouter = require('./routes/jobType');
+const historyRouter = require('./routes/history');
 
 //mongodb
 const mongoose = require("mongoose");
@@ -23,6 +24,7 @@ const corsOptions = {
 };
 
 app.use('/jobs', cors(corsOptions), jobRouter);
+app.use('/history', cors(corsOptions), historyRouter);
 app.use('/jobTypes', cors(corsOptions), jobTypeRouter);
 
 

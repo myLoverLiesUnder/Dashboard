@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const jobInfo =  require('../data/jobInfo');
-
 const JobType = require('../models/JobType');
+const Job = require('../models/Job');
+
+//mock
+const jobinfo = require('../data/jobInfo');
+const buildinfo = require('../data/build');
+
 /* GET dashboard Data. */
 router.get('/', async (req, res) => {
-    res.send(await JobType.find())
+    const jobTypes = await JobType.find();
+    res.send(jobTypes)
 });
 
 module.exports = router;
