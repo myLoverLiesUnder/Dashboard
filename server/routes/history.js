@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const schedule = require('node-schedule');
+const bodyParser = require('body-parser');
 const History = require('../models/History');
 const Job = require('../models/Job');
+
+const jsonParser = bodyParser.json();
 
 //mock
 const jobinfo = require('../data/jobInfo');
@@ -14,19 +17,19 @@ router.get('/', async (req, res) => {
 });
 
 /* Create comment */
-router.post('/addComment', async (req, res) => {
+router.post('/comment', jsonParser, async (req, res) => {
     const model = await History.create(req.body);
     res.send(model)
 });
 
 /* PUT comment */
-router.put('/putComment/:id', async (req, res) => {
+router.put('/comment/:id', jsonParser, async (req, res) => {
     const model = await History.findByIdAndUpdate(req.params.id, req.body);
     res.send(model)
 });
 
 /* Delete comment */
-router.delete('/deleteComment/:id', async (req, res) => {
+router.delete('/comment/:id', async (req, res) => {
     await History.findByIdAndDelete(req.params.id);
     res.send({
         success: true

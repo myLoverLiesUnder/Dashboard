@@ -1,4 +1,4 @@
-import {fetch} from "./fetch";
+import { fetch } from "./fetch";
 
 export function getJobs() {
     return fetch({
@@ -20,4 +20,22 @@ export function getHistory() {
         method: 'get'
     })
 }
+
+export function addComment(data) {
+    return fetch({
+        url: '/history/comment',
+        method: 'post',
+        data: data
+    })
+}
+
+export function editComment(id, data) {
+    return fetch({
+        url: '/history/comment/' + id,
+        method: 'put',
+        data: data
+    })
+}
+
+
 

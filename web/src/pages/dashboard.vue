@@ -85,16 +85,34 @@
                     <template v-slot:dateCell="{date, data}">
                         <el-popover
                                 :ref="data.day"
-                                placement="bottom"
+                                placement="right"
                                 width="400"
+                                :value="clickDate=== data.day"
                                 trigger="manual">
-                            <el-table :data="errorJobList">
+                            <i class="el-icon-close" @click="dismiss" style="float: right;cursor: pointer"></i>
+                            <el-table :data="form.errorJobList">
                                 <el-table-column property="url" label="Error job url"></el-table-column>
                             </el-table>
                             <el-divider content-position="left">
                                 <div class="comment-header">Comment</div>
                             </el-divider>
-                            <div class="comment-body">{{comment}}</div>
+                            <div class="comment-body">
+                                <el-form ref="form" :model="form">
+                                    <el-form-item>
+                                        <el-input
+                                                type="textarea"
+                                                placeholder="请输入内容"
+                                                v-model="form.comment"
+                                                maxlength="100"
+                                                show-word-limit
+                                        >
+                                        </el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" style="float: right;" @click="submit">Add</el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </div>
                             <div slot="reference"
                                  :ref="data.day + 'div'"
                                  @click="clickCalendar(data)"
@@ -110,7 +128,7 @@
 </template>
 
 <script>
-    import { getHistory, getJobs } from "../axios/api";
+    import { addComment, editComment, getHistory, getJobs } from "../axios/api";
     import echarts from '@/lib/echarts'
     import moment from 'moment'
 
@@ -123,43 +141,22 @@
                 oldDate: '',
                 visible: false,
                 errorJobList: [],
-                comment: ''
+                form: {},
+                clickDate: ''
             }
         },
         methods: {
             clickCalendar: function (data) {
-                if (data.type === "current-month") {
-                    this.errorJobList = [];
-                    this.comment = '';
-                    for (let item of this.history) {
-                        if (data.day === moment(new Date(item.date)).format("YYYY-MM-DD")) {
-                            this.errorJobList = item.errorJobList;
-                            this.comment = item.comment;
-                        }
-                    }
-                    if (!this.oldDate) {
-                        this.$refs[data.day].doShow();
-                        this.visible = true;
-                    } else {
-                        if (this.oldDate !== data.day) {
-                            this.$refs[this.oldDate].doClose();
-                            this.visible = true;
-                            this.$refs[data.day].doShow();
-                        } else {
-                            if (this.visible) {
-                                this.$refs[data.day].doClose();
-                            } else {
-                                this.$refs[data.day].doShow();
-                            }
-                            this.visible = !this.visible;
-                        }
-                    }
-                } else {
-                    if (this.oldDate) {
-                        this.$refs[this.oldDate].doClose();
+                this.clickDate = data.day;
+                this.form = {};
+                for (let item of this.history) {
+                    if (data.day === moment(new Date(item.date)).format("YYYY-MM-DD")) {
+                        this.form = item;
                     }
                 }
-                this.oldDate = data.day;
+            },
+            dismiss: function () {
+                this.clickDate = '';
             },
             dateFormat: function (row, column) {
                 let date = row[column.property];
@@ -174,10 +171,13 @@
                         this.history = res.data;
                         for (let item of this.history) {
                             let refIndex = moment(new Date(item.date)).format("YYYY-MM-DD") + 'div';
-                            if (item.errorJobList.length === 0) {
-                                this.$refs[refIndex].innerText += ' 😁';
-                            } else {
-                                this.$refs[refIndex].innerText += ' 😫';
+                            this.$refs[refIndex].innerText = moment(new Date(item.date)).format("MM-DD");
+                            if (new Date(item.date).getTime() < new Date().getTime()) {
+                                if (item.errorJobList.length === 0) {
+                                    this.$refs[refIndex].innerText += ' 😁';
+                                } else {
+                                    this.$refs[refIndex].innerText += ' 😫';
+                                }
                             }
                         }
                     }
@@ -239,6 +239,46 @@
                         myChart.setOption(option);
                     }
                 });
+            },
+            submit() {
+                let model = {
+                    comment: this.form.comment,
+                };
+                if (this.form.date) {
+                    model.date = moment(new Date(this.form.date)).format("YYYY-MM-DD")
+                } else {
+                    model.date = this.clickDate;
+                }
+                if (this.form.errorJobList && this.form.errorJobList.length > 0) {
+                    model.errorJobList = this.form.errorJobList;
+                }
+                if (this.form._id) {
+                    editComment(this.form._id, model).then((res) => {
+                        if (res.status === 200) {
+                            this.clickDate = '';
+                            this.getIncidentsHistory();
+                            this.$message({
+                                showClose: true,
+                                message: 'Edit comment!',
+                                type: 'success'
+                            });
+                        }
+
+                    })
+                } else {
+                    addComment(model).then((res) => {
+                        if (res.status === 200) {
+                            this.clickDate = '';
+                            this.getIncidentsHistory();
+                            this.$message({
+                                showClose: true,
+                                message: 'Add comment',
+                                type: 'success'
+                            });
+                        }
+                    })
+                }
+
             }
         },
         mounted() {
