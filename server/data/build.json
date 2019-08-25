@@ -151,7 +151,7 @@
   "number":249,
   "queueId":133366,
   "result":"SUCCESS",
-  "timestamp":1565293502130,
+  "timestamp":1566707284000,
   "url":"https://rcore-ci.rakuten-it.com/jenkins/job/GID_CoreAPI_3_4_HappyPath_dhc/249/",
   "builtOn":"DedicatedOnlyForMembershipInitiative133",
   "changeSet":{
