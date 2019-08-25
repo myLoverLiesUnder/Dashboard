@@ -81,7 +81,7 @@
                 <el-divider content-position="left">Incidents History</el-divider>
             </div>
             <div class="source">
-                <el-calendar>
+                <el-calendar v-model="date" v-if="update">
                     <template v-slot:dateCell="{date, data}">
                         <el-popover
                                 :ref="data.day"
@@ -142,7 +142,9 @@
                 visible: false,
                 errorJobList: [],
                 form: {},
-                clickDate: ''
+                clickDate: '',
+                date: new Date(),
+                update: true
             }
         },
         methods: {
@@ -171,12 +173,14 @@
                         this.history = res.data;
                         for (let item of this.history) {
                             let refIndex = moment(new Date(item.date)).format("YYYY-MM-DD") + 'div';
-                            this.$refs[refIndex].innerText = moment(new Date(item.date)).format("MM-DD");
-                            if (new Date(item.date).getTime() < new Date().getTime()) {
-                                if (item.errorJobList.length === 0) {
-                                    this.$refs[refIndex].innerText += ' 😁';
-                                } else {
-                                    this.$refs[refIndex].innerText += ' 😫';
+                            if (this.$refs[refIndex]) {
+                                this.$refs[refIndex].innerText = moment(new Date(item.date)).format("MM-DD");
+                                if (new Date(item.date).getTime() < new Date().getTime()) {
+                                    if (item.errorJobList.length === 0) {
+                                        this.$refs[refIndex].parentElement.parentElement.style.backgroundColor = '#cbf6b6';
+                                    } else {
+                                        this.$refs[refIndex].parentElement.parentElement.style.backgroundColor = '#ffd7d7';
+                                    }
                                 }
                             }
                         }
@@ -284,11 +288,20 @@
         mounted() {
             this.getApiStatusAndDrawChart();
             this.getIncidentsHistory();
+        },
+        watch: {
+            date: function () {
+                this.update = false;
+                this.$nextTick(() => {
+                    this.update = true;
+                    this.getIncidentsHistory()
+                })
+            }
         }
     }
 </script>
-
 <style scoped>
+
     .block {
         margin-bottom: 24px;
         border: 1px solid #ebebeb;
