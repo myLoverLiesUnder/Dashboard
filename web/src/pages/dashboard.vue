@@ -193,11 +193,19 @@
                 getJobs().then((res) => {
                     if (res.status === 200) {
                         this.tableData = res.data;
+                        let successCount = 0;
+                        let totalCount = 0;
                         for (let item of this.tableData) {
                             jobTypesList.push(item.jobType);
+                            for (let job of item.jobList) {
+                                successCount += job.successCount;
+                                totalCount += job.totalCount;
+                            }
                             let temp = {
                                 value: item.jobList.length,
-                                name: item.jobType
+                                name: item.jobType,
+                                successCount: successCount,
+                                totalCount: totalCount
                             };
                             jobsData.push(temp)
                         }
@@ -205,7 +213,12 @@
                         let option = {
                             tooltip: {
                                 trigger: 'item',
-                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                                formatter: function (params) {
+                                    return params.data.name + '</br>' +
+                                        'successCount:&nbsp;&nbsp' + params.data.successCount + '</br>' +
+                                        'totalCount:&nbsp;&nbsp' + params.data.totalCount + '</br>' +
+                                        'successRatio:&nbsp;&nbsp' + params.data.successCount / params.data.totalCount + '%'
+                                }
                             },
                             legend: {
                                 orient: 'vertical',
@@ -214,14 +227,18 @@
                             },
                             series: [
                                 {
-                                    name: 'job amount',
+                                    name: 'job',
                                     type: 'pie',
                                     radius: ['50%', '70%'],
                                     avoidLabelOverlap: false,
                                     label: {
                                         normal: {
                                             show: false,
-                                            position: 'center'
+                                            position: 'center',
+                                            formatter: function (params) {
+                                                return params.data.name + '\n\n' +
+                                                    params.data.successCount / params.data.totalCount + '%'
+                                            }
                                         },
                                         emphasis: {
                                             show: true,
@@ -229,7 +246,7 @@
                                                 fontSize: '20',
                                                 fontWeight: 'bold'
                                             }
-                                        }
+                                        },
                                     },
                                     labelLine: {
                                         normal: {
@@ -290,12 +307,14 @@
             this.getIncidentsHistory();
         },
         watch: {
-            date: function () {
-                this.update = false;
-                this.$nextTick(() => {
-                    this.update = true;
-                    this.getIncidentsHistory()
-                })
+            date: function (val, oldval) {
+                if (moment(val).format("YYYY-MM") !== moment(oldval).format("YYYY-MM")) {
+                    this.update = false;
+                    this.$nextTick(() => {
+                        this.update = true;
+                        this.getIncidentsHistory()
+                    })
+                }
             }
         }
     }
