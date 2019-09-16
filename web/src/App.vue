@@ -15,13 +15,12 @@
         name: 'app',
         components: {
             Header
-
-        }
+        },
     }
 </script>
 
 <style>
-    .page-container{
+    .page-container {
         height: 100%;
         width: 1155px;
         margin: 0 auto;

@@ -3,14 +3,24 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter);
 
-const routers = [{
-    path: '/',
-    name: 'dashboard',
-    title: 'dashboard',
-    component: resolve => {
-        require(['@/pages/dashboard.vue'], resolve)
+const routers = [
+    {
+        path: '/',
+        name: 'dashboard',
+        title: 'dashboard',
+        component: resolve => {
+            require(['@/pages/dashboard.vue'], resolve)
+        }
+    },
+    {
+        path: '/management',
+        name: 'management',
+        title: 'management',
+        component: resolve => {
+            require(['@/pages/management.vue'], resolve)
+        }
     }
-}];
+];
 
 const RouterConfig = {
     mode: 'history',
@@ -18,3 +28,5 @@ const RouterConfig = {
 };
 
 export const router = new VueRouter(RouterConfig);
+
+

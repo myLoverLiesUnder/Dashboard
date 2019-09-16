@@ -7,10 +7,9 @@
             <el-menu :default-active="activeIndex"
                      class="el-menu-demo"
                      mode="horizontal"
-                     :router="true"
-                     @select="handleSelect">
+                     :router="true">
                 <el-menu-item index="/">Dashboard</el-menu-item>
-                <el-menu-item index="/Jenkins">Jenkins</el-menu-item>
+                <el-menu-item index="/management">Management</el-menu-item>
             </el-menu>
         </div>
     </div>
@@ -19,16 +18,11 @@
 <script>
     export default {
         name: "Header",
-        data() {
-            return {
-                activeIndex: '/',
-            };
-        },
-        methods: {
-            handleSelect(key, keyPath) {
-
+        computed: {
+            activeIndex: function () {
+                return this.$store.state.activeIndex.activeIndex
             }
-        }
+        },
     }
 </script>
 
@@ -37,7 +31,7 @@
         height: 60px;
     }
 
-    .container{
+    .container {
         height: 100%;
         border-bottom: 1px solid #dcdfe6;
         width: 1150px;
